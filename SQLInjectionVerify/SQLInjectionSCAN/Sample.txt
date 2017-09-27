@@ -1,0 +1,33 @@
+﻿
+
+public partial class Login : System.Web.UI.Page
+{
+    
+    protected void submit_Click(object sender, EventArgs e)
+    {
+        string strUsername = Request.Form["username"];
+        string strPassword = Request.Form["pwd"];
+        
+        SqlConnection dbcon = new SqlConnection(ConfigurationManager.AppSettings["ConnenctionStr"]);
+        dbcon.Open();
+        
+        SqlCommand cmd = new SqlCommand("USP_VERIFY_USER", dbcon);
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        SqlParameter Username = new SqlParameter("@strNAME", SqlDbType.VarChar, 50);
+        Username.Value = strUsername.Trim();
+        cmd.Parameters.Add(Username);
+
+        SqlParameter Password = new SqlParameter("@strPASSWORD", SqlDbType.VarChar, 50);
+        Password.Value = strPassword.Trim();
+        cmd.Parameters.Add(Password);
+
+        SqlParameter Output = new SqlParameter("@intOUTPUT", SqlDbType.Int, 4);
+        cmd.Parameters.Add(Output);
+        Output.Direction = ParameterDirection.Output; 
+       
+        cmd.ExecuteNonQuery();
+        string result = Output.Value.ToString();
+    }
+    
+}
